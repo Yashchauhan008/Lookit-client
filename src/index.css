@@ -958,6 +958,79 @@ a {
   padding: 0.75rem;
 }
 
+.upload-panel {
+  margin-top: 0;
+}
+
+.dropzone {
+  margin-top: 1rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed var(--line);
+  text-align: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.dropzone.is-dragging,
+.dropzone:hover {
+  border-color: var(--accent);
+  background: rgba(240, 230, 211, 0.04);
+}
+
+.upload-jobs {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.upload-job-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.upload-bar {
+  margin-top: 0.35rem;
+  height: 3px;
+  background: var(--line);
+}
+
+.upload-bar > div {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.15s ease;
+}
+
+.photo-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.photo-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.photo-status {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+
 .guest-shell {
   min-height: 100svh;
   background: var(--bg);

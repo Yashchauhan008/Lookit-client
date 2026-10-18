@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { eventsApi, type LookitEvent } from '../lib/api'
+import { eventsApi, uploadsApi, type LookitEvent, type LookitPhoto } from '../lib/api'
+import EventUploader from '../components/EventUploader'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3007'
 const APP_BASE = import.meta.env.VITE_APP_BASE_URL || window.location.origin
@@ -10,9 +11,21 @@ export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { user, loading, logout } = useAuth()
   const [event, setEvent] = useState<LookitEvent | null>(null)
+  const [photos, setPhotos] = useState<LookitPhoto[]>([])
   const [shareUrl, setShareUrl] = useState('')
   const [qrUrl, setQrUrl] = useState('')
   const [error, setError] = useState('')
+
+  const loadPhotos = useCallback(async () => {
+    if (!id) return
+    try {
+      const res = await uploadsApi.listPhotos(id)
+      setPhotos(res.photos)
+      setEvent((prev) => (prev ? { ...prev, photo_count: res.total } : prev))
+    } catch {
+      /* ignore list errors until uploads configured */
+    }
+  }, [id])
 
   useEffect(() => {
     if (!user || !id) return
@@ -32,6 +45,7 @@ export default function EventDetailPage() {
           objectUrl = URL.createObjectURL(blob)
           setQrUrl(objectUrl)
         }
+        await loadPhotos()
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load event')
       }
@@ -39,7 +53,7 @@ export default function EventDetailPage() {
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
-  }, [user, id])
+  }, [user, id, loadPhotos])
 
   if (loading) {
     return (
@@ -108,9 +122,25 @@ export default function EventDetailPage() {
               </section>
             </div>
 
-            <p className="auth-sub" style={{ marginTop: '2rem' }}>
-              Uploads & face indexing come next.
-            </p>
+            <div style={{ marginTop: '2rem' }}>
+              <EventUploader eventId={event.id} onComplete={() => void loadPhotos()} />
+            </div>
+
+            <section className="event-card" style={{ marginTop: '1.5rem' }}>
+              <h3>Recent uploads</h3>
+              {photos.length === 0 ? (
+                <p className="auth-sub">No photos yet.</p>
+              ) : (
+                <ul className="photo-list">
+                  {photos.slice(0, 40).map((p) => (
+                    <li key={p.id}>
+                      <span>{p.original_filename || p.id.slice(0, 8)}</span>
+                      <span className="photo-status">{p.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           </>
         )}
       </main>
