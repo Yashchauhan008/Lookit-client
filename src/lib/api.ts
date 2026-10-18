@@ -42,6 +42,23 @@ export async function api<T>(
   return data
 }
 
+export type LookitEvent = {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  event_date: string | null
+  visibility: 'selfie_only' | 'full_gallery'
+  theme: Record<string, unknown>
+  cover_desktop_key: string | null
+  cover_mobile_key: string | null
+  status: 'active' | 'hidden' | 'deleted'
+  has_pin: boolean
+  created_at: string
+  updated_at: string | null
+  photo_count: number
+}
+
 export const authApi = {
   register(body: { name: string; email: string; password: string; studio_name?: string }) {
     return api<{ token: string; message?: string; dev_otp?: string }>('/auth/register', {
@@ -66,5 +83,66 @@ export const authApi = {
   },
   me() {
     return api<{ user: AuthUser }>('/auth/me')
+  },
+}
+
+export const eventsApi = {
+  list() {
+    return api<{ events: LookitEvent[] }>('/events')
+  },
+  create(body: {
+    name: string
+    description?: string | null
+    event_date?: string | null
+    visibility?: 'selfie_only' | 'full_gallery'
+    pin?: string | null
+    slug?: string
+  }) {
+    return api<{ event: LookitEvent }>('/events', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+  },
+  get(id: string) {
+    return api<{ event: LookitEvent; share_url: string }>(`/events/${id}`)
+  },
+  update(
+    id: string,
+    body: Partial<{
+      name: string
+      description: string | null
+      event_date: string | null
+      visibility: 'selfie_only' | 'full_gallery'
+      pin: string | null
+      clear_pin: boolean
+      status: 'active' | 'hidden'
+    }>,
+  ) {
+    return api<{ event: LookitEvent }>(`/events/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    })
+  },
+  remove(id: string) {
+    return api<{ message: string }>(`/events/${id}`, { method: 'DELETE' })
+  },
+  qrUrl(id: string) {
+    const token = getToken()
+    return `${API_BASE}/events/${id}/qr?t=${encodeURIComponent(token || '')}`
+  },
+  publicBySlug(slug: string) {
+    return api<{
+      event: {
+        id: string
+        slug: string
+        name: string
+        description: string | null
+        event_date: string | null
+        visibility: string
+        theme: Record<string, unknown>
+        needs_pin: boolean
+        studio: { name: string }
+      }
+    }>(`/e/${slug}`, { auth: false })
   },
 }

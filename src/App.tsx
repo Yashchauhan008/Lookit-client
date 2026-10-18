@@ -6,6 +6,8 @@ import RegisterPage from './pages/RegisterPage'
 import VerifyPage from './pages/VerifyPage'
 import AppHomePage from './pages/AppHomePage'
 import AdminHomePage from './pages/AdminHomePage'
+import EventDetailPage from './pages/EventDetailPage'
+import GuestEventPage from './pages/GuestEventPage'
 
 export default function App() {
   return (
@@ -17,7 +19,9 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/app" element={<AppHomePage />} />
+          <Route path="/app/events/:id" element={<EventDetailPage />} />
           <Route path="/admin" element={<AdminHomePage />} />
+          <Route path="/e/:slug" element={<GuestEventPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
