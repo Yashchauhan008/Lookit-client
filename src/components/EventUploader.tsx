@@ -151,7 +151,7 @@ export default function EventUploader({ eventId, onComplete }: Props) {
   return (
     <section className="event-card upload-panel">
       <h3>Upload photos</h3>
-      <p className="auth-sub">JPEG / PNG · max 30 MB · direct to Cloudflare R2</p>
+      <p className="auth-sub">JPEG / PNG · max 30 MB · direct to object storage</p>
       {error ? <p className="auth-error">{error}</p> : null}
 
       <div
