@@ -131,14 +131,28 @@ export default function EventDetailPage() {
               {photos.length === 0 ? (
                 <p className="auth-sub">No photos yet.</p>
               ) : (
-                <ul className="photo-list">
-                  {photos.slice(0, 40).map((p) => (
-                    <li key={p.id}>
-                      <span>{p.original_filename || p.id.slice(0, 8)}</span>
-                      <span className="photo-status">{p.status}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="photo-grid">
+                  {photos.slice(0, 60).map((p) => {
+                    const src = p.thumb_url || p.preview_url
+                    return (
+                      <a
+                        key={p.id}
+                        className="photo-tile"
+                        href={p.preview_url || src || undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                        title={p.original_filename || p.id}
+                      >
+                        {src ? (
+                          <img src={src} alt={p.original_filename || 'Photo'} loading="lazy" />
+                        ) : (
+                          <div className="photo-tile-empty">{p.status}</div>
+                        )}
+                        <span className="photo-status">{p.status}</span>
+                      </a>
+                    )
+                  })}
+                </div>
               )}
             </section>
           </>

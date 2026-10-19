@@ -1006,29 +1006,49 @@ a {
   transition: width 0.15s ease;
 }
 
-.photo-list {
-  list-style: none;
-  margin: 1rem 0 0;
-  padding: 0;
+.photo-grid {
+  margin-top: 1rem;
   display: grid;
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
 }
 
-.photo-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.9rem;
+.photo-tile {
+  display: block;
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0a0a0a;
+}
+
+.photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-tile-empty {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
   color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
 }
 
-.photo-status {
+.photo-tile .photo-status {
+  position: absolute;
+  left: 0.4rem;
+  bottom: 0.4rem;
+  padding: 0.15rem 0.35rem;
+  background: rgba(0, 0, 0, 0.65);
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
 }
 
 .guest-shell {
@@ -1049,4 +1069,71 @@ a {
 
 .guest-title {
   font-size: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+.guest-panel {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+  max-width: 420px;
+}
+
+.guest-panel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+.guest-check {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  color: var(--muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.guest-check input {
+  margin-top: 0.2rem;
+}
+
+.guest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.guest-camera {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: #111;
+  border: 1px solid var(--line);
+  transform: scaleX(-1);
+}
+
+.guest-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.88);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  cursor: zoom-out;
+}
+
+.guest-lightbox img {
+  max-width: min(100%, 960px);
+  max-height: 90svh;
+  object-fit: contain;
+}
+
+.photo-tile {
+  padding: 0;
+  border: 1px solid var(--line);
+  background: #0a0a0a;
+  cursor: pointer;
+  color: inherit;
 }

@@ -244,3 +244,78 @@ export const uploadsApi = {
     )
   },
 }
+
+export type GuestMatchPhoto = {
+  id: string
+  original_filename: string | null
+  faces_count: number
+  thumb_url: string | null
+  preview_url: string | null
+}
+
+function guestToken(slug: string) {
+  return sessionStorage.getItem(`lookit_guest_${slug}`)
+}
+
+async function guestFetch<T>(
+  slug: string,
+  path: string,
+  options: RequestInit & { json?: unknown; formData?: FormData } = {},
+): Promise<T> {
+  const headers = new Headers(options.headers || {})
+  const token = guestToken(slug)
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  let body = options.body
+  if (options.json !== undefined) {
+    headers.set('Content-Type', 'application/json')
+    body = JSON.stringify(options.json)
+  }
+  if (options.formData) {
+    body = options.formData
+  }
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers, body })
+  const data = (await res.json().catch(() => ({}))) as T & { message?: string }
+  if (!res.ok) {
+    throw new Error(data.message || `Request failed (${res.status})`)
+  }
+  return data
+}
+
+export const guestApi = {
+  unlock(slug: string, body: { pin?: string | null }) {
+    return guestFetch<{ token: string; event_id: string; needs_consent: boolean }>(
+      slug,
+      `/e/${slug}/unlock`,
+      { method: 'POST', json: body },
+    )
+  },
+  consentText(slug: string) {
+    return api<{ consent: { version: string; text: string } }>(
+      `/e/${slug}/consent-text`,
+      { auth: false },
+    )
+  },
+  consent(slug: string, body: { accepted: true }) {
+    return guestFetch<{ token: string; consent_version: string }>(
+      slug,
+      `/e/${slug}/consent`,
+      { method: 'POST', json: body },
+    )
+  },
+  search(slug: string, file: File) {
+    const form = new FormData()
+    form.append('selfie', file)
+    return guestFetch<{
+      photos: GuestMatchPhoto[]
+      match_count: number
+      message?: string
+      code?: string
+    }>(slug, `/e/${slug}/search`, { method: 'POST', formData: form })
+  },
+  photoUrl(slug: string, photoId: string, variant: 'thumb' | 'preview' | 'orig' = 'preview') {
+    return guestFetch<{ url: string; expires_in: number; filename: string | null }>(
+      slug,
+      `/e/${slug}/photos/${photoId}/url?variant=${variant}`,
+    )
+  },
+}
