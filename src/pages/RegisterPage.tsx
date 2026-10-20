@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { authApi } from '../lib/api'
 import { useAuth } from '../lib/auth'
+import AuthShell from '../components/AuthShell'
+import { Button, ErrorText, Field, inputCls } from '../components/kit'
 
 export default function RegisterPage() {
   const { user, loading } = useAuth()
@@ -43,54 +45,51 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <Link to="/" className="brand auth-brand">
-          <span className="brand-name">Lookit</span>
-        </Link>
-        <h1>Create studio</h1>
-        <p className="auth-sub">We’ll email a 6-digit OTP to verify</p>
-
-        <form className="auth-form" onSubmit={onSubmit}>
-          <label>
-            Your name
-            <input required value={name} onChange={(e) => setName(e.target.value)} />
-          </label>
-          <label>
-            Studio name
-            <input value={studioName} onChange={(e) => setStudioName(e.target.value)} />
-          </label>
-          <label>
-            Email
-            <input
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              required
-              minLength={5}
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          {error ? <p className="auth-error">{error}</p> : null}
-          <button className="btn btn-solid auth-submit" type="submit" disabled={submitting}>
-            {submitting ? 'Sending OTP…' : 'Continue'}
-          </button>
-        </form>
-
-        <p className="auth-foot">
-          Already have an account? <Link to="/login">Sign in</Link>
-        </p>
-      </div>
-    </div>
+    <AuthShell
+      title="Create studio"
+      sub="We’ll email a 6-digit OTP to verify"
+      footer={
+        <>
+          Already have an account?{' '}
+          <Link className="font-semibold text-ink hover:text-accent" to="/login">
+            Sign in
+          </Link>
+        </>
+      }
+    >
+      <form className="grid gap-4" onSubmit={onSubmit}>
+        <Field label="Your name">
+          <input className={inputCls} required value={name} onChange={(e) => setName(e.target.value)} />
+        </Field>
+        <Field label="Studio name">
+          <input className={inputCls} value={studioName} onChange={(e) => setStudioName(e.target.value)} />
+        </Field>
+        <Field label="Email">
+          <input
+            className={inputCls}
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
+        <Field label="Password">
+          <input
+            className={inputCls}
+            type="password"
+            required
+            minLength={5}
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Field>
+        {error ? <ErrorText>{error}</ErrorText> : null}
+        <Button type="submit" className="mt-1 w-full" disabled={submitting}>
+          {submitting ? 'Sending OTP…' : 'Continue'}
+        </Button>
+      </form>
+    </AuthShell>
   )
 }
