@@ -23,3 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# self-hosted MediaPipe runtime (copied by scripts/copy-mediapipe.mjs)
+public/mediapipe/wasm
+
+# env files (keep only .env.example tracked)
+.env.*
+!.env.example

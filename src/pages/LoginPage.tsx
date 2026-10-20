@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import AuthShell from '../components/AuthShell'
+import { Button, ErrorText, Field, inputCls } from '../components/kit'
 
 export default function LoginPage() {
   const { login, user, loading } = useAuth()
@@ -29,46 +31,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <Link to="/" className="brand auth-brand">
-          <span className="brand-name">Lookit</span>
-        </Link>
-        <h1>Sign in</h1>
-        <p className="auth-sub">Photographers and studio admins</p>
-
-        <form className="auth-form" onSubmit={onSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              autoComplete="current-password"
-              required
-              minLength={5}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          {error ? <p className="auth-error">{error}</p> : null}
-          <button className="btn btn-solid auth-submit" type="submit" disabled={submitting}>
-            {submitting ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
-
-        <p className="auth-foot">
-          New studio? <Link to="/register">Create account</Link>
-        </p>
-      </div>
-    </div>
+    <AuthShell
+      title="Sign in"
+      sub="Photographers and studio admins"
+      footer={
+        <>
+          New studio?{' '}
+          <Link className="font-semibold text-ink hover:text-accent" to="/register">
+            Create account
+          </Link>
+        </>
+      }
+    >
+      <form className="grid gap-4" onSubmit={onSubmit}>
+        <Field label="Email">
+          <input
+            className={inputCls}
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
+        <Field label="Password">
+          <input
+            className={inputCls}
+            type="password"
+            autoComplete="current-password"
+            required
+            minLength={5}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Field>
+        {error ? <ErrorText>{error}</ErrorText> : null}
+        <Button type="submit" className="mt-1 w-full" disabled={submitting}>
+          {submitting ? 'Signing in…' : 'Sign in'}
+        </Button>
+      </form>
+    </AuthShell>
   )
 }

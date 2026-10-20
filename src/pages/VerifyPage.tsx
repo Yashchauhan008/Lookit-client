@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { authApi } from '../lib/api'
 import { useAuth } from '../lib/auth'
+import AuthShell from '../components/AuthShell'
+import { Button, ErrorText, Field, inputCls } from '../components/kit'
 
 type LocState = {
   registrationToken?: string
@@ -45,37 +47,32 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <Link to="/" className="brand auth-brand">
-          <span className="brand-name">Lookit</span>
-        </Link>
-        <h1>Enter OTP</h1>
-        <p className="auth-sub">
-          Sent to {state.email || 'your email'}. Check spam if you don’t see it.
+    <AuthShell
+      title="Enter OTP"
+      sub={`Sent to ${state.email || 'your email'}. Check spam if you don’t see it.`}
+    >
+      {state.devOtp ? (
+        <p className="mb-4 rounded-2xl border border-dashed border-accent/50 bg-accent/5 px-4 py-3 text-sm font-medium text-[#c2410c]">
+          Dev OTP: {state.devOtp}
         </p>
-        {state.devOtp ? (
-          <p className="auth-dev">Dev OTP: {state.devOtp}</p>
-        ) : null}
-
-        <form className="auth-form" onSubmit={onSubmit}>
-          <label>
-            6-digit code
-            <input
-              inputMode="numeric"
-              pattern="[0-9]{6}"
-              maxLength={6}
-              required
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          </label>
-          {error ? <p className="auth-error">{error}</p> : null}
-          <button className="btn btn-solid auth-submit" type="submit" disabled={submitting}>
-            {submitting ? 'Verifying…' : 'Verify & continue'}
-          </button>
-        </form>
-      </div>
-    </div>
+      ) : null}
+      <form className="grid gap-4" onSubmit={onSubmit}>
+        <Field label="6-digit code">
+          <input
+            className={`${inputCls} text-center text-2xl font-semibold tracking-[0.5em]`}
+            inputMode="numeric"
+            pattern="[0-9]{6}"
+            maxLength={6}
+            required
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+          />
+        </Field>
+        {error ? <ErrorText>{error}</ErrorText> : null}
+        <Button type="submit" className="mt-1 w-full" disabled={submitting}>
+          {submitting ? 'Verifying…' : 'Verify & continue'}
+        </Button>
+      </form>
+    </AuthShell>
   )
 }
